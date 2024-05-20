@@ -1,3 +1,5 @@
+import pandas as pd
+
 def nrz_i(bits_sequence):
     nrz_i_bits = []
     prev_bit = 1
@@ -71,3 +73,43 @@ def d_manchester(bits_sequence):
             d_manchester_bits.extend(prev_bit)
 
     return d_manchester_bits
+
+def _8B6T(bits_sequence):
+    _8B6T_sequence = []
+    outputs = ""
+    weight = 0
+
+    bits_sequence = "".join([str(bit) for bit in bits_sequence])
+
+    # Turn the bits sequence into a hex code and load the table
+    hex_codes = hex(int(bits_sequence, 2))[2:]
+    df = pd.read_csv("8B6T_table.csv")
+    
+    # Split the hex code into pairs of two
+    hex_codes = [hex_codes[i:i+2] for i in range(0, len(hex_codes), 2)]
+    invert = False
+
+    for hex_code in hex_codes:
+        # look for the hex code in the table to define the output
+        output = df.loc[df["hex_code"] == hex_code, "bits_sequence"].values[0]
+        outputs = "".join([outputs, output])
+        for id, bit in enumerate(output):
+            # Every 8 bits invert the output if the weight is different from 0
+            if id % 8 == 0:
+                if weight != 0:
+                    invert = True
+                else:
+                    invert = False
+
+            if bit == "0":
+                _8B6T_sequence.append(0)
+            elif (bit == "+" and not invert) or (bit == "-" and invert):
+                _8B6T_sequence.append(1)
+                weight += 1
+            elif (bit == "-" and not invert) or (bit == "+" and invert):
+                _8B6T_sequence.append(-1)
+                weight -= 1
+
+    
+    return _8B6T_sequence, outputs
+

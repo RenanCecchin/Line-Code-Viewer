@@ -3,7 +3,7 @@ from utils import plot_line_code
 import line_codes
 
 if __name__ == "__main__":
-    line_code = st.selectbox("Selecione o código de linha", ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester Diferencial"])
+    line_code = st.selectbox("Selecione o código de linha", ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester Diferencial", "8B6T"])
     bits_sequence = st.text_input("Digite a sequência de bits e confirme com Enter")
     bits_sequence = [int(bit) for bit in bits_sequence]
 
@@ -63,4 +63,14 @@ if __name__ == "__main__":
                 d_manchester_bits = [bit + offset for bit in d_manchester_bits]
 
                 st.pyplot(plot_line_code(d_manchester_bits, offset = offset, line_offset = 2))
+
+            case "8B6T":
+                offset = 2
+                _8B6T_sequence, outputs = line_codes._8B6T(bits_sequence)
+                st.text(outputs)
+
+                # Add offset to each bit to plot the bits correctly
+                _8B6T_sequence = [bit + offset for bit in _8B6T_sequence]
+
+                st.pyplot(plot_line_code(_8B6T_sequence, offset = offset, line_offset = 6))
 
