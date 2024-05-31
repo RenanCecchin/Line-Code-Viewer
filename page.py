@@ -81,7 +81,6 @@ if __name__ == "__main__":
                 
                 # Add offset to each bit to plot the bits correctly
                 mlt_3_bits = [bit + offset for bit in mlt_3_bits]
-                print(mlt_3_bits)
 
                 st.pyplot(plot_line_code(mlt_3_bits, offset = offset))
 
