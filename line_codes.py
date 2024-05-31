@@ -75,6 +75,9 @@ def d_manchester(bits_sequence):
     return d_manchester_bits
 
 def _8B6T(bits_sequence):
+    if len(bits_sequence) % 8 != 0:
+        raise ValueError("The sequence must have a multiple of 8 bits")
+    
     _8B6T_sequence = []
     outputs = ""
     weight = 0
@@ -113,3 +116,56 @@ def _8B6T(bits_sequence):
     
     return _8B6T_sequence, outputs
 
+def mlt_3(bits_sequence):
+    mlt_3_bits = []
+    positive_wave = True
+    current_wave = 0
+
+    for bit in bits_sequence:
+        if bit == 1:
+            if positive_wave:
+                current_wave += 1
+
+                # If the current wave is 1 change the wave to negative
+                if current_wave == 1:
+                    positive_wave = False
+            else:
+                current_wave -= 1
+                # If the current wave is -1 change the wave to positive
+                if current_wave == -1:
+                    positive_wave = True
+
+            mlt_3_bits.append(current_wave)
+        else:
+            mlt_3_bits.append(current_wave)
+
+    return mlt_3_bits
+
+def _4D_PAM5(bits_sequence):
+    if len(bits_sequence) % 2 != 0:
+        raise ValueError("The sequence must have an even number of bits")
+    
+    _4D_PAM5_sequence = []
+    # Split the sequence into pairs
+    bits_pairs = [bits_sequence[i:i+2] for i in range(0, len(bits_sequence), 2)]
+    bits_pairs = ["".join([str(bit) for bit in pair]) for pair in bits_pairs]
+
+    # Create a list with unique pairs for the encoding
+    unique_pairs = list(set(bits_pairs))
+
+    # Exclude 0 because it's only for error detection
+    levels = [-2, -1, 1, 2]
+
+    # Create a dictionary with the encoding
+    encoding = {}
+    for pair in unique_pairs:
+        encoding[pair] = levels.pop()
+    
+    # Create the 4D-PAM5 sequence
+    for pair in bits_pairs:
+        _4D_PAM5_sequence.append(encoding[pair])
+
+    return _4D_PAM5_sequence
+
+
+    
